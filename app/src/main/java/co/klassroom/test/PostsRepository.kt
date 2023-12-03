@@ -10,7 +10,6 @@ class PostsRepository {
     fun getPosts(): List<Post> {
         val postsStr = postsFetcher.getPosts()
         val endpointResponse = json.decodeFromString(EndpointResponse.serializer(), postsStr)
-        println("asdf endpointResponse=$endpointResponse")
         return endpointResponse.posts
     }
 }

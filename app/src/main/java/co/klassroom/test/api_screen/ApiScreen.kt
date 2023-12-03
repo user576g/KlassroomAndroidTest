@@ -1,21 +1,17 @@
 package co.klassroom.test.api_screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import android.view.View
+import android.widget.ImageView
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.klassroom.test.R
 
@@ -31,35 +27,36 @@ fun ApiScreen(onMenuClick: () -> Unit) {
     val viewState = apiViewModel.viewState.collectAsState()
     val posts = apiViewModel.posts.collectAsState()
 
-    Column {
-        HeaderSection(onMenuClick = onMenuClick)
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = {
+            val apiScreen: View = View.inflate(it, R.layout.api_screen, null)
+            val recyclerView = apiScreen.findViewById<RecyclerView>(R.id.recycle_view)
+            recyclerView.adapter = PostsAdapter(posts.value)
 
-        if (viewState.value == ViewState.Loading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            AndroidView(
-                modifier = Modifier.padding(horizontal = 12.dp),
-                factory = {
-                    val recyclerView = RecyclerView(it)
-                    recyclerView.layoutManager = LinearLayoutManager(it)
-                    recyclerView.adapter = PostsAdapter(posts.value)
-
-                    val dividerItemDecoration = DividerItemDecoration(
-                        recyclerView.context, DividerItemDecoration.VERTICAL
-                    )
-                    dividerItemDecoration.setDrawable(
-                        ContextCompat.getDrawable(it, R.drawable.rectangle)!!
-                    )
-                    recyclerView.addItemDecoration(dividerItemDecoration)
-
-                    recyclerView
-                }
+            val dividerItemDecoration = DividerItemDecoration(
+                recyclerView.context, DividerItemDecoration.VERTICAL
             )
+            dividerItemDecoration.setDrawable(
+                ContextCompat.getDrawable(it, R.drawable.rectangle)!!
+            )
+            recyclerView.addItemDecoration(dividerItemDecoration)
+
+            apiScreen.findViewById<ImageView>(R.id.iv_menu)
+                .setOnClickListener { onMenuClick.invoke() }
+
+            apiScreen
+        },
+        update = {
+            it.findViewById<RecyclerView>(R.id.recycle_view)
+                .adapter = PostsAdapter(posts.value)
+
+            val clProgress = it.findViewById<ConstraintLayout>(R.id.cl_progress)
+            clProgress.visibility = if (ViewState.Loading == viewState.value) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         }
-    }
+    )
 }
