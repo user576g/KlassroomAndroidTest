@@ -6,11 +6,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import co.klassroom.test.Post
 import co.klassroom.test.R
 import com.squareup.picasso.Picasso
 
-class PostsAdapter(private val posts: List<Post>): RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
+class PostsAdapter(private val apiViewModel: ApiViewModel): RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     class PostViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val ivAvatar: ImageView = view.findViewById(R.id.iv_avatar)
         val tvUserName: TextView = view.findViewById(R.id.tv_user_name)
@@ -26,10 +25,10 @@ class PostsAdapter(private val posts: List<Post>): RecyclerView.Adapter<PostsAda
         return PostViewHolder(view)
     }
 
-    override fun getItemCount(): Int = posts.size
+    override fun getItemCount(): Int = apiViewModel.posts.value.size
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = posts[position]
+        val post = apiViewModel.posts.value[position]
 
         with(holder) {
             tvUserName.text = post.userName
@@ -50,6 +49,14 @@ class PostsAdapter(private val posts: List<Post>): RecyclerView.Adapter<PostsAda
                     .load(photoUrl)
                     .into(ivPostPhoto)
             }
+        }
+
+        if (position in listOf(49, 99, 149)) {
+            apiViewModel.loadMore(
+                onSuccess = {
+                    notifyItemInserted(position + 1)
+                }
+            )
         }
     }
 }

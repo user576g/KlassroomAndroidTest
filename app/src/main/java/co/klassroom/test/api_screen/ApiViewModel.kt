@@ -26,8 +26,22 @@ class ApiViewModel: ViewModel() {
     private val _posts = MutableStateFlow<Posts>(emptyList())
     val posts: StateFlow<Posts> = _posts.asStateFlow()
 
+    private var page: Int = 1
+
     init {
         fetchPosts()
+    }
+
+    fun loadMore(onSuccess: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            ++page
+            val posts = postsRepository.getPosts(page)
+            val oldList = _posts.value
+            val newList = ArrayList(oldList)
+            newList.addAll(posts)
+            _posts.value = newList
+            onSuccess.invoke()
+        }
     }
 
     private fun fetchPosts() {

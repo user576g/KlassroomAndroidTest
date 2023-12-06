@@ -25,14 +25,13 @@ fun PreviewApi() {
 fun ApiScreen(onMenuClick: () -> Unit) {
     val apiViewModel: ApiViewModel = viewModel()
     val viewState = apiViewModel.viewState.collectAsState()
-    val posts = apiViewModel.posts.collectAsState()
 
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = {
             val apiScreen: View = View.inflate(it, R.layout.api_screen, null)
             val recyclerView = apiScreen.findViewById<RecyclerView>(R.id.recycle_view)
-            recyclerView.adapter = PostsAdapter(posts.value)
+            recyclerView.adapter = PostsAdapter(apiViewModel)
 
             val dividerItemDecoration = DividerItemDecoration(
                 recyclerView.context, DividerItemDecoration.VERTICAL
@@ -49,7 +48,7 @@ fun ApiScreen(onMenuClick: () -> Unit) {
         },
         update = {
             it.findViewById<RecyclerView>(R.id.recycle_view)
-                .adapter = PostsAdapter(posts.value)
+                .adapter = PostsAdapter(apiViewModel)
 
             val clProgress = it.findViewById<ConstraintLayout>(R.id.cl_progress)
             clProgress.visibility = if (ViewState.Loading == viewState.value) {
