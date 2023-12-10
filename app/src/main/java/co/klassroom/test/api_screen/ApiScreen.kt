@@ -44,18 +44,31 @@ fun ApiScreen(onMenuClick: () -> Unit) {
             apiScreen.findViewById<ImageView>(R.id.iv_menu)
                 .setOnClickListener { onMenuClick.invoke() }
 
+            apiScreen.findViewById<ConstraintLayout>(R.id.row_in_the_bottom)
+                .visibility = View.GONE
+
             apiScreen
         },
         update = {
-            it.findViewById<RecyclerView>(R.id.recycle_view)
-                .adapter = PostsAdapter(apiViewModel)
-
             val clProgress = it.findViewById<ConstraintLayout>(R.id.cl_progress)
-            clProgress.visibility = if (ViewState.Loading == viewState.value) {
+            clProgress.visibility = if (
+                viewState.value == ViewState.Loading && apiViewModel.posts.value.isEmpty()
+            ) {
                 View.VISIBLE
             } else {
                 View.GONE
             }
+
+            val rowWithProgress = it.findViewById<ConstraintLayout>(R.id.row_in_the_bottom)
+            rowWithProgress.visibility = if (
+                viewState.value == ViewState.Loading && apiViewModel.posts.value.isNotEmpty()
+            ) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
+
         }
     )
 }

@@ -51,7 +51,7 @@ class PostsAdapter(private val apiViewModel: ApiViewModel): RecyclerView.Adapter
             }
         }
 
-        if (position in listOf(49, 99, 149)) {
+        if (apiViewModel.posts.value.size == position + 1) {
             apiViewModel.loadMore(
                 onSuccess = {
                     notifyItemInserted(position + 1)

@@ -33,6 +33,7 @@ class ApiViewModel: ViewModel() {
     }
 
     fun loadMore(onSuccess: () -> Unit) {
+        _viewState.value = ViewState.Loading
         viewModelScope.launch(Dispatchers.IO) {
             ++page
             val posts = postsRepository.getPosts(page)
@@ -40,6 +41,8 @@ class ApiViewModel: ViewModel() {
             val newList = ArrayList(oldList)
             newList.addAll(posts)
             _posts.value = newList
+
+            _viewState.value = ViewState.Success
             onSuccess.invoke()
         }
     }
