@@ -44,9 +44,6 @@ fun ApiScreen(onMenuClick: () -> Unit) {
             apiScreen.findViewById<ImageView>(R.id.iv_menu)
                 .setOnClickListener { onMenuClick.invoke() }
 
-            apiScreen.findViewById<ConstraintLayout>(R.id.row_in_the_bottom)
-                .visibility = View.GONE
-
             apiScreen
         },
         update = {
@@ -58,17 +55,6 @@ fun ApiScreen(onMenuClick: () -> Unit) {
             } else {
                 View.GONE
             }
-
-            val rowWithProgress = it.findViewById<ConstraintLayout>(R.id.row_in_the_bottom)
-            rowWithProgress.visibility = if (
-                viewState.value == ViewState.Loading && apiViewModel.posts.value.isNotEmpty()
-            ) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
-
-
         }
     )
 }

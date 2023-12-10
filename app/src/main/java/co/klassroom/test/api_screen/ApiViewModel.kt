@@ -26,6 +26,9 @@ class ApiViewModel: ViewModel() {
     private val _posts = MutableStateFlow<Posts>(emptyList())
     val posts: StateFlow<Posts> = _posts.asStateFlow()
 
+    private val _isNoMoreLabelVisible = MutableStateFlow(false)
+    val isNoMoreLabelVisible: StateFlow<Boolean> = _isNoMoreLabelVisible.asStateFlow()
+
     private var page: Int = 1
 
     init {
@@ -34,8 +37,10 @@ class ApiViewModel: ViewModel() {
 
     fun loadMore(onSuccess: () -> Unit) {
         _viewState.value = ViewState.Loading
+        ++page
+        _isNoMoreLabelVisible.value = page > (postsRepository.totalPages ?: Int.MAX_VALUE)
+
         viewModelScope.launch(Dispatchers.IO) {
-            ++page
             val posts = postsRepository.getPosts(page)
             val oldList = _posts.value
             val newList = ArrayList(oldList)

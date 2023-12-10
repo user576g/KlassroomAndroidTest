@@ -4,4 +4,5 @@
     <string name="rest_of_the_screen_should_be_black">rest of the screen should be black</string>
     <string name="charlotte_perriands">Charlotte Perriand’s “La maison au bord de l’eau”</string>
     <string name="api_recycler_view">API / RecyclerView</string>
+    <string name="no_more_posts">No more posts for now</string>
 </resources>
